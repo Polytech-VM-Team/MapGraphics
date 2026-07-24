@@ -8,13 +8,6 @@
 #include <QSet>
 #include <QWheelEvent>
 #include <QCoreApplication>
-#include <QHash>
-
-static uint qHash(const QPointF &p, uint seed = 0)
-{
-    return qHash(QPair<qint64,qint64>(static_cast<qint64>(p.x()*1e6),
-                                      static_cast<qint64>(p.y()*1e6)), seed);
-}
 #include <QThread>
 #include <QMenu>
 
@@ -406,7 +399,7 @@ void MapGraphicsView::doTileLayout()
     //We'll mark tiles that aren't being displayed as free so we can use them
     QQueue<MapTileGraphicsObject *> freeTiles;
 
-    QSet<QPointF> placesWhereTilesAre;
+    QSet<QPoint> placesWhereTilesAre;
     foreach(MapTileGraphicsObject * tileObject, _tileObjects)
     {
         if (!tileObject->isVisible() || !exaggeratedBoundingRect.contains(tileObject->pos()))
@@ -415,7 +408,7 @@ void MapGraphicsView::doTileLayout()
             tileObject->setVisible(false);
         }
         else
-            placesWhereTilesAre.insert(tileObject->pos());
+            placesWhereTilesAre.insert(tileObject->pos().toPoint());
     }
 
     const quint16 tileSize = _tileSource->tileSize();
@@ -442,7 +435,7 @@ void MapGraphicsView::doTileLayout()
 
 
             bool tileIsThere = false;
-            if (placesWhereTilesAre.contains(scenePos))
+            if (placesWhereTilesAre.contains(scenePos.toPoint()))
                 tileIsThere = true;
 
             if (tileIsThere)

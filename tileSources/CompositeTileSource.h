@@ -8,7 +8,7 @@
 #include <QHash>
 #include <QMap>
 #include <QSharedPointer>
-#include <QMutex>
+#include <QRecursiveMutex>
 
 class MAPGRAPHICSSHARED_EXPORT CompositeTileSource : public MapTileSource
 {
@@ -81,7 +81,7 @@ private slots:
 
 private:
     void doChildThreading(QSharedPointer<MapTileSource>);
-    QMutex * _globalMutex;
+    QRecursiveMutex * _globalMutex;
     QList<QSharedPointer<MapTileSource> > _childSources;
     QList<qreal> _childOpacities;
     QList<bool> _childEnabledFlags;

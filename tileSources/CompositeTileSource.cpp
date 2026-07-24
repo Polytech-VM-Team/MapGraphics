@@ -10,7 +10,7 @@
 CompositeTileSource::CompositeTileSource() :
     MapTileSource()
 {
-    _globalMutex = new QMutex(QMutex::Recursive);
+    _globalMutex = new QRecursiveMutex();
     this->setCacheMode(MapTileSource::NoCaching);
 }
 
