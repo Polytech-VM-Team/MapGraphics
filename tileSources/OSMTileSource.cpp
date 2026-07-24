@@ -7,6 +7,7 @@
 #include <QStringBuilder>
 #include <QtDebug>
 #include <QNetworkReply>
+#include <QRegularExpression>
 
 const qreal PI = 3.14159265358979323846;
 const qreal deg2rad = PI / 180.0;
@@ -183,11 +184,12 @@ void OSMTileSource::handleNetworkRequestFinished()
     {
         //We support the max-age directive only for now
         const QByteArray cacheControl = reply->rawHeader("Cache-Control");
-        QRegExp maxAgeFinder("max-age=(\\d+)");
-        if (maxAgeFinder.indexIn(cacheControl) != -1)
+        QRegularExpression maxAgeFinder("max-age=(\\d+)");
+        QRegularExpressionMatch match = maxAgeFinder.match(cacheControl);
+        if (match.hasMatch())
         {
             bool ok = false;
-            const qint64 delta = maxAgeFinder.cap(1).toULongLong(&ok);
+            const qint64 delta = match.captured(1).toULongLong(&ok);
 
             if (ok)
                 expireTime = QDateTime::currentDateTimeUtc().addSecs(delta);

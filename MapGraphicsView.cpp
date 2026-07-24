@@ -8,6 +8,13 @@
 #include <QSet>
 #include <QWheelEvent>
 #include <QCoreApplication>
+#include <QHash>
+
+static uint qHash(const QPointF &p, uint seed = 0)
+{
+    return qHash(QPair<qint64,qint64>(static_cast<qint64>(p.x()*1e6),
+                                      static_cast<qint64>(p.y()*1e6)), seed);
+}
 #include <QThread>
 #include <QMenu>
 
@@ -353,7 +360,7 @@ void MapGraphicsView::handleChildViewScrollWheel(QWheelEvent *event)
     event->setAccepted(true);
 
     this->setDragMode(MapGraphicsView::ScrollHandDrag);
-    if (event->delta() > 0)
+    if (event->angleDelta().y() > 0)
         this->zoomIn(MouseZoom);
     else
         this->zoomOut(MouseZoom);
