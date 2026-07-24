@@ -5,6 +5,8 @@
 #include "Position.h"
 #include "MapGraphicsObject.h"
 
+#include <QColor>
+
 class MAPGRAPHICSSHARED_EXPORT LineObject : public MapGraphicsObject
 {
     Q_OBJECT
@@ -23,9 +25,12 @@ public:
 
     qreal thickness() const;
     void setThickness(qreal nThick);
-    
+
+    QColor color() const;
+    void setColor(const QColor& color);
+
 signals:
-    
+
 public slots:
     void setEndPointA(const Position& pos);
     void setEndPointB(const Position& pos);
@@ -39,6 +44,7 @@ private:
     Position _a;
     Position _b;
     qreal _thickness;
+    QColor _color;
     
 };
 

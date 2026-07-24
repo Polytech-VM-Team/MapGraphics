@@ -11,6 +11,7 @@ LineObject::LineObject(const Position &endA,
     _a(endA), _b(endB)
 {
     _thickness = qBound<qreal>(0.0, thickness, 5.0);
+    _color = QColor(0, 0, 0, 200);
     this->updatePositionFromEndPoints();
 }
 
@@ -50,6 +51,7 @@ void LineObject::paint(QPainter *painter,
     painter->setRenderHint(QPainter::Antialiasing, true);
     QPen pen = painter->pen();
     pen.setWidthF(_thickness);
+    pen.setColor(_color);
     painter->setPen(pen);
 
     const qreal avgLat = (_a.latitude() + _b.latitude()) / 2.0;
@@ -111,4 +113,15 @@ void LineObject::updatePositionFromEndPoints()
     const qreal avgLon = (_a.longitude() + _b.longitude()) / 2.0;
     const qreal avgLat = (_a.latitude() + _b.latitude()) / 2.0;
     this->setPos(QPointF(avgLon, avgLat));
+}
+
+QColor LineObject::color() const
+{
+    return _color;
+}
+
+void LineObject::setColor(const QColor &color)
+{
+    _color = color;
+    this->redrawRequested();
 }
