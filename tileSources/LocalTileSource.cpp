@@ -10,8 +10,8 @@ static const qreal PI = 3.14159265358979323846;
 static const qreal DEG2RAD = PI / 180.0;
 static const qreal RAD2DEG = 180.0 / PI;
 
-LocalTileSource::LocalTileSource(const QString& baseDir, const QString& extension) :
-    MapTileSource(), _baseDir(baseDir), _extension(extension)
+LocalTileSource::LocalTileSource(const QString& baseDir, const QStringList& extensions) :
+    MapTileSource(), _baseDir(baseDir), _extensions(extensions)
 {
     this->setCacheMode(MapTileSource::NoCaching);
     initZoomCache();
@@ -105,23 +105,26 @@ QString LocalTileSource::name() const
 
 QString LocalTileSource::tileFileExtension() const
 {
-    return _extension;
+    return _extensions.first();
 }
 
 void LocalTileSource::fetchTile(quint32 x, quint32 y, quint8 z)
 {
-    const QString filePath =
-      _baseDir % QStringLiteral("/") % QString::number(z) % QStringLiteral("/") %
-      QString::number(x) % QStringLiteral("/") % QString::number(y) % QStringLiteral(".") %
-      _extension;
-
-    QImage* image = new QImage(filePath);
-    if (image->isNull())
+    for (const auto& ext : _extensions)
     {
+        const QString filePath =
+          _baseDir % QStringLiteral("/") % QString::number(z) % QStringLiteral("/") %
+          QString::number(x) % QStringLiteral("/") % QString::number(y) % QStringLiteral(".") %
+          ext;
+
+        QImage* image = new QImage(filePath);
+        if (!image->isNull())
+        {
+            this->prepareNewlyReceivedTile(x, y, z, image, QDateTime::currentDateTime().addYears(1));
+            return;
+        }
         delete image;
-        qDebug() << "LocalTileSource: tile not found" << filePath;
-        return;
     }
 
-    this->prepareNewlyReceivedTile(x, y, z, image, QDateTime::currentDateTime().addYears(1));
+    qDebug() << "LocalTileSource: tile not found" << _baseDir << z << x << y;
 }

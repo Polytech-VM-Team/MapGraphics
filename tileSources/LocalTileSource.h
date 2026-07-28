@@ -4,11 +4,13 @@
 #include "MapGraphics_global.h"
 #include "MapTileSource.h"
 
+#include <QStringList>
+
 class MAPGRAPHICSSHARED_EXPORT LocalTileSource : public MapTileSource
 {
     Q_OBJECT
 public:
-    explicit LocalTileSource(const QString& baseDir, const QString& extension = "jpg");
+    explicit LocalTileSource(const QString& baseDir, const QStringList& extensions = {"jpg", "png"});
     virtual ~LocalTileSource();
 
     // MapTileSource interface
@@ -28,7 +30,7 @@ private:
     void initZoomCache();
 
     QString _baseDir;
-    QString _extension;
+    QStringList _extensions;
     quint8 _minZoom = 0;
     quint8 _maxZoom = 18;
     bool _zoomCached = false;
