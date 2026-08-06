@@ -220,6 +220,16 @@ QSharedPointer<MapTileSource> MapGraphicsView::tileSource() const
 
 void MapGraphicsView::setTileSource(QSharedPointer<MapTileSource> tSource)
 {
+    //Drop any existing tiles so a source switch re-renders from scratch instead of
+    //leaving stale imagery from the previous source (e.g. mixing online/offline maps).
+    for (MapTileGraphicsObject * tileObject : _tileObjects)
+    {
+        if (!_childScene.isNull())
+            _childScene->removeItem(tileObject);
+        delete tileObject;
+    }
+    _tileObjects.clear();
+
     _tileSource = tSource;
 
     if (!_tileSource.isNull())
